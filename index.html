@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Name — Art Portfolio</title>
+  <meta name="description" content="Artsy stuff by Moritz." />
+  <style>
+    :root { --max: 1100px; --pad: 16px; --radius: 14px; }
+    * { box-sizing: border-box; }
+    body { margin:0; font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:#111; background:#fafafa;}
+    header, main, footer { max-width: var(--max); margin: 0 auto; padding: 24px var(--pad); }
+    header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+    h1 { margin:0; font-size: clamp(22px, 3.5vw, 36px); }
+    nav a { text-decoration:none; margin-left:14px; color:#111; opacity:.8 }
+    nav a:hover { opacity:1; text-decoration:underline; }
+    .intro { margin: 8px 0 18px; opacity:.9 }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:12px; }
+    .card { background:#fff; border-radius: var(--radius); overflow:hidden; border:1px solid #eaeaea; }
+    .card img { display:block; width:100%; height:auto; aspect-ratio: 4/3; object-fit: cover; }
+    .meta { padding:10px 12px; }
+    .title { font-weight:600; }
+    .note { font-size: 13px; opacity:.85 }
+    figure { margin:0 }
+    .about { margin-top: 28px; background:#fff; border:1px solid #eaeaea; border-radius: var(--radius); padding:18px; }
+    footer { font-size:14px; opacity:.7 }
+    /* Lightweight lightbox */
+    .lightbox { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; padding:20px; }
+    .lightbox img { max-width: min(95vw, var(--max)); max-height: 90vh; border-radius:12px; }
+    .lightbox:target { display:flex; }
+    .close { position: fixed; top: 14px; right: 18px; font-size: 26px; color:#fff; text-decoration:none }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Moritz</h1>
+      <p class="intro">Painter & illustrator. Based in City. Available for commissions.</p>
+    </div>
+    <nav>
+      <a href="#gallery">Gallery</a>
+      <a href="#about">About</a>
+      <a href="super.moritz.christ@gmx.de">Contact</a>
+      <a href="https://instagram.com/moemchen13" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2 id="gallery">Gallery</h2>
+    <section class="grid">
+      <!-- Duplicate these cards for more artworks -->
+      <figure class="card">
+        <a href="#work1"><img src="images/ikarus_landing.jpg" alt="Ikarus landing, 2025, Acryl on canvas" loading="lazy"></a>
+        <figcaption class="meta">
+          <div class="title">Ikarus landing</div>
+          <div class="note">Acryl on canvas, 2025 · 60×80 cm</div>
+        </figcaption>
+      </figure>
+
+      <figure class="card">
+        <a href="#work2"><img src="images/ikarus_descent.jpg" alt="Ikarus Descent, 2024, Acryl on canvas" loading="lazy"></a>
+        <figcaption class="meta">
+          <div class="title">Ikarus descent</div>
+          <div class="note">Acryl on canvas, 2024</div>
+        </figcaption>
+      </figure>
+      <!-- Add more... -->
+    </section>
+
+    <!-- Lightbox images -->
+    <div id="work1" class="lightbox">
+      <a class="close" href="#">×</a>
+      <img src="images/ikarus_landing_large.jpg" alt="Ikarus landing large view">
+    </div>
+    <div id="work2" class="lightbox">
+      <a class="close" href="#">×</a>
+      <img src="images/iakrus_descent_large.jpg" alt="Ikarus descent large view">
+    </div>
+
+    <section id="about" class="about">
+      <h2>About</h2>
+      <p>Live vividly. Without lows you would neglect live.</p>
+      <p><strong>Contact:</strong> <a href="super.moritz.christ@gmx.de">super.moritz.christ@gmx.de</a></p>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="y"></span> Moritz Christ · All images © their respective owners.
+  </footer>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
