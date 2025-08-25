@@ -46,6 +46,7 @@
         </p>
       </section>
 
+
       <section id="experience" aria-label="Experience">
         <h2>Experience</h2>
         <p>Here could be your advertisement</p>
@@ -56,13 +57,7 @@
           <h2>Coding Projects</h2>
         </div>
         <div class="coding-layout">
-          <!-- Left sidebar with selector -->
-          <aside class="coding-sidebar">
-            <label class="tagview" for="tagCategory">
-              <select id="tagCategory" aria-label="Choose tag category"></select>
-            </label>
-          </aside>
-
+          
           <!-- Carousel -->
           <div class="carousel" id="codingCarousel">
             <button class="carousel-btn prev" id="codingPrev" aria-label="Previous projects">‹</button>
@@ -71,9 +66,13 @@
             </div>
             <button class="carousel-btn next" id="codingNext" aria-label="Next projects">›</button>
           </div>
+          
+          <div id="tagCategoryToggle" class="toggle-center"></div>
 
         </div>
       </section>
+
+
 
       <section id="art" aria-label="Art Projects">
         <h2>Art and such</h2>
@@ -88,17 +87,56 @@
 
       </section>
 
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+      <div class="lightbox__content" role="dialog" aria-modal="true" aria-label="Artwork viewer">
+        <button id="lbClose" class="lightbox__close" aria-label="Close">×</button>
+        <button id="lbPrev"  class="lightbox__nav lightbox__prev" aria-label="Previous">‹</button>
+        <button id="lbNext"  class="lightbox__nav lightbox__next" aria-label="Next">›</button>
 
+        <figure class="lightbox__figure">
+          <img id="lbImg" alt="">
+          <figcaption class="lightbox__caption">
+            <h3 id="lbTitle"></h3>
+            <p  id="lbDesc"></p>
+          </figcaption>
+        </figure>
+      </div>
+</div>
 
     </main>
 
     <footer class="footer">
+      <section class="social-bar container">
+        <nav class="social-links" aria-label="Social links">
+          <a class="social-btn" id="bluesky" href="https://bluesky.com/moemchen13" target="_blank" rel="noopener noreferrer">
+            <!-- twitter icon -->
+            <img src="./assets/icons/bluesky.png" width="24" height="24" alt="GitHub">
+            <span>@moemchen13</span>
+          </a>
+
+          <a class="social-btn" id="linkedin" href="https://www.linkedin.com/in/moritz" target="_blank" rel="noopener noreferrer">
+            <!-- linkedin icon -->
+            <img src="./assets/icons/linkedin.png" width="24" height="24" alt="GitHub">
+            <span>in/moritz</span>
+          </a>
+
+          <a class="social-btn" id="github" href="https://github.com/moemchen13" target="_blank" rel="noopener noreferrer">
+            <!-- github icon -->
+            <img src="./assets/icons/github.svg" width="24" height="24" alt="GitHub">
+            <span>moemchen13</span>
+          </a>
+        </nav>
+
+        
+        
+      </section>
+
       <div class="container">
-        <p>
-          <a id="emailLink" href="mailto:super.moritz.christ@gmx.com">super.moritz.christ@gmx.de</a>
-        </p>
-        © <span id="year"></span> Moritz Christ
+        © <span id="year"></span> Moritz Christ 
+        <br>
+        <a href="mailto:super.moritz.christ@gmx.de">super.moritz.christ@gmx.de</a>
       </div>
+
     </footer>
 
       <script src="script.js" defer></script>

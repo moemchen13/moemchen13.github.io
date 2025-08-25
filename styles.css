@@ -7,14 +7,10 @@
 
 /* Fixed card height for carousel items (tweak to taste) */
 :root {
-  --card-h: 320px; /* mobile/base */
+  --card-h: 400px; /* mobile/base */
 }
 @media (min-width: 640px) { :root { --card-h: 340px; } }
 @media (min-width: 960px) { :root { --card-h: 360px; } }
-
-/* Make every item inside the track the same height */
-.carousel-track { align-items: stretch; }          /* ensure equal cross-axis height */
-.carousel-track > * { height: var(--card-h); }     /* ← the key line */
 
 
 /* ---- Reset-ish defaults ---- */
@@ -54,7 +50,7 @@ img {
 
 /* ---- Layout helper ---- */
 .container {
-  width: min(800px, 90vw);
+  width: min(1000px, 90vw);
   margin-inline: auto;
   padding: 2rem 1rem;
 }
@@ -176,8 +172,8 @@ h2 { font-size: 1.35rem; margin: 0 0 1rem; }
 /* Card internals: 4-row grid → title | desc (flex) | tags | actions */
 .project-card {
   height: 100%;                        /* fill the fixed item height from step 1 */
-  display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  display: flex;
+  flex-direction: column;
   gap: .5rem;
   padding: 1rem;
   background: #f7f7f8;
@@ -190,12 +186,15 @@ h2 { font-size: 1.35rem; margin: 0 0 1rem; }
 
 /* Description (row 2) — clamp to keep heights tidy */
 .project-card .desc {
+  flex-grow: 1;
   margin: 0;
+  min-height: 4em;
   opacity: .9;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 5;        /* adjust 4–6 lines to taste */
   -webkit-box-orient: vertical;
+  overflow:hidden;
 }
 
 /* Tags (row 3) */
@@ -206,30 +205,10 @@ h2 { font-size: 1.35rem; margin: 0 0 1rem; }
   margin: 0;
 }
 
-/* Actions/footer (row 4) stays pinned at the bottom automatically */
-.project-card .actions { margin: 0; }
-
-
 /* Make grid items stretch and cards fill available height */
 .projects-grid { align-items: stretch; }
 
-/* Let each project card fill the grid cell and push actions to the bottom */
-.project-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.project-card .actions { margin-top: auto; }
 
-.tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
-.tag {
-  font-size: .85rem;
-  line-height: 1;
-  padding: .35rem .5rem;
-  border-radius: .5rem;
-  border: 1px solid rgba(0,0,0,.08);
-  background: #fff;
-}
 @media (prefers-color-scheme: dark) {
   .tag { background: #0b0c0f; border-color: #22242a; }
 }
@@ -252,64 +231,103 @@ h2 { font-size: 1.35rem; margin: 0 0 1rem; }
 @media (min-width: 640px) { .art-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 960px) { .art-grid { grid-template-columns: repeat(3, 1fr); } }
 
-/* Art cards */
+
+/* --------------  ART CARDS: square + overlay + white text -------------- */
+
+/* Use a slightly darker pastel green so white text stays readable */
+:root {
+  /* tweak the last two numbers if you want lighter/darker */
+  --art-overlay: hsl(145 60% 40% / 0.60);
+}
+
+/* The generic carousel fixed height is great for coding cards,
+   but for the ART track we want the height to follow a square. */
+#artTrack > * {            /* slide wrappers inside the ART track */
+  height: auto;            /* override the global fixed slide height */
+}
+#artTrack > * > .art-card {
+  height: auto;            /* let content define the height */
+}
+
+/* --- ART CARDS: title at fixed top, show on hover --- */
+
+/* Keep square image + veil from your current setup */
+.art-card .thumb { position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
+.art-card .thumb::after {
+  content:""; position:absolute; inset:0;
+  background: var(--art-overlay, hsla(98, 94%, 44%, 0.5));
+  opacity: 0; transition: opacity .25s ease; z-index: 1;
+}
+.art-card .thumb img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit: cover; transition: opacity .4s ease-out;
+}
+
+/* Use the overlay container for both title & desc */
+.art-card.tile .text {
+  position: absolute; inset: 0; z-index: 2;
+  pointer-events: none; /* clicks pass through to link/card */
+}
+
+/* Title: fixed at TOP for all cards, hidden until hover */
+.art-card.tile h1 {
+  position: absolute; top: 14px; left: 16px; right: 16px;
+  margin: 0; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity .25s ease, transform .25s ease;
+  /* optional: clamp to 2 lines so heights stay uniform */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* Description: fixed at BOTTOM, hidden until hover */
+.art-card.tile p {
+  position: absolute; bottom: 16px; left: 16px; right: 16px;
+  margin: 0; line-height: 1.45; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .35s ease .05s, transform .35s ease .05s;
+  /* optional: clamp to avoid overflow */
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* Hover/focus reveal (both title and description) */
+.art-card.tile:hover .thumb::after,
+.art-card.tile:focus-within .thumb::after { opacity: 1; }
+.art-card.tile:hover img,
+.art-card.tile:focus-within img { opacity: .3; }
+
+.art-card.tile:hover h1,
+.art-card.tile:focus-within h1 { opacity: 1; transform: translateY(0); }
+.art-card.tile:hover p,
+.art-card.tile:focus-within p  { opacity: 1; transform: translateY(0); }
+
+.art-card.tile {
+  transition: transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 35px 77px -17px rgba(0,0,0,.44);
+}
+.art-card.tile:hover { transform: scale(1.05); box-shadow: 0 35px 77px -17px rgba(0,0,0,.64); }
+
 .art-card {
-  border: 1px solid rgba(0,0,0,.06);
-  border-radius: .6rem;
-  overflow: clip;
-  background: #fff;
-}
-.art-card a { text-decoration: none; color: inherit; }
-.art-card img {
-  width: 100%;
-  height: auto;
-  display: block;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-}
-.art-card .art-body { padding: .75rem 1rem 1rem; }
-.art-card .title { font-weight: 600; margin: 0 0 .25rem; }
-.art-card .desc { margin: 0; opacity: .85; font-size: .95rem; }
-@media (prefers-color-scheme: dark) {
-  .art-card { background: #121318; border-color: #22242a; }
+  background: none !important;  
+  border: none !important;
+  box-shadow: none !important;  
+  padding: 0 !important;
 }
 
-/* --- Art card thumb with fixed aspect ratio --- */
-.art-card .thumb {
-  position: relative;
-  aspect-ratio: 4 / 3;     /* Keeps a consistent height even if the image is missing */
-  background: #f0f2f5;     /* Neutral backdrop behind images */
-  overflow: hidden;
+.art-card.tile {
+  box-shadow: 0 35px 77px -17px rgba(0,0,0,.44);
 }
-.art-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.art-card.tile:hover {
+  box-shadow: 0 35px 77px -17px rgba(0,0,0,.64);
 }
 
-/* Fallback message is hidden by default; shown when card is in error state */
-.art-card .thumb-fallback {
-  display: none;
-  position: absolute;
-  inset: 0;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 1rem;
-  font-size: .95rem;
-  font-weight: 600;
-  color: #b00;
-}
 
-/* When image fails or is missing */
-.art-card.error img { display: none; }
-.art-card.error .thumb-fallback { display: flex; }
+/* If an old below-image body exists, keep it hidden */
+.art-card .art-body { display: none; }
 
-@media (prefers-color-scheme: dark) {
-  .art-card .thumb { background: #171a20; }
-  .art-card .thumb-fallback { color: #ff9aa2; }
-}
 
 /* ========== Adjustable minimum card width ==========*/
 :root {
@@ -371,13 +389,6 @@ h2 { font-size: 1.35rem; margin: 0 0 1rem; }
   font-size: 0.85rem;
 }
 
-/* Art images: consistent block, won’t stretch card heights erratically */
-.art-card img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 8px;
-}
 
 /* Full-height arrows */
 .carousel-btn {
@@ -395,11 +406,249 @@ h2 { font-size: 1.35rem; margin: 0 0 1rem; }
 }
 .carousel-btn:disabled { opacity: 0.4; cursor: default; }
 
-/* (Optional) clamp very long descriptions to keep rows tidy */
-.desc {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;   /* tweak to taste */
-  -webkit-box-orient: vertical;
+
+
+/* 1) Make every slide a fixed height */
+.carousel-track > * {
+  height: var(--card-h);      /* already defined in :root */
+  display: flex;              /* allow the inner card to stretch */
+}
+
+/* 2) Make the actual card fill its slide and stack vertically */
+.carousel-track > * > .project-card,
+.carousel-track > * > .art-card,
+.carousel-track > * > .card {
+  /* use whichever class your cards have (keep all three if unsure) */
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;              /* IMPORTANT: lets inner content shrink in flex */
+  height: 100%;
+}
+
+/* 3) Normalize the media block so images never change the card height */
+.card .thumb,
+.project-card .thumb,
+.art-card .thumb {
+  aspect-ratio: 4 / 3;        /* pick a ratio you like */
+  width: 100%;
   overflow: hidden;
+}
+.card .thumb img,
+.project-card .thumb img,
+.art-card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 4) Clamp and reserve space for variable-length descriptions */
+.card .desc,
+.project-card .desc {
+  /* let this region expand/shrink but not push buttons down */
+  flex: 1 1 auto;
+  min-height: calc(1em * 1.4 * 4); /* ~4 lines space (adjust) */
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 4;      /* adjust line count */
+  -webkit-box-orient: vertical;
+}
+
+/* 5) Keep the actions/buttons aligned at the bottom of every card */
+.card .actions,
+.project-card .actions,
+.art-card .actions {
+  margin-top: auto;           /* pushes this block to the bottom */
+}
+
+/* (optional) Make all buttons the same height */
+.card .actions .btn,
+.project-card .actions .btn,
+.art-card .actions .btn,
+.card .actions a,
+.project-card .actions a,
+.art-card .actions a {
+  line-height: 1;
+  padding: 0.6rem 0.9rem;     /* consistent hit area */
+}
+
+.toggle-center {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0; /* space above/below */
+}
+
+/*segmented toggle button*/
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg, #fff);
+}
+.segmented-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: .5rem .9rem;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.segmented-btn + .segmented-btn { border-left: 1px solid var(--border, #e5e5e5); }
+.segmented-btn.is-active,
+.segmented-btn[aria-pressed="true"] { background: rgba(0,0,0,.06); }
+.segmented-btn:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .segmented { border-color: #22242a; background: #0b0c0f; }
+  .segmented-btn + .segmented-btn { border-left-color: #22242a; }
+  .segmented-btn.is-active,
+  .segmented-btn[aria-pressed="true"] { background: #171a20; }
+}
+
+/* ===== Lightbox ===== */
+body.modal-open { overflow: hidden; }
+
+.lightbox {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.86);
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s ease;
+}
+.lightbox.is-open { opacity: 1; pointer-events: auto; }
+
+.lightbox__content {
+  position: relative;
+  width: 100%; height: 100%;
+  display: grid; place-items: center;
+  padding: 2rem;
+}
+
+.lightbox__figure {
+  margin: 0;
+  max-width: min(1200px, 95vw);
+  max-height: 90vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 1rem;
+}
+.lightbox__figure img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  border-radius: 16px;
+  background: #0b0c0f;
+}
+.lightbox__caption { color: #fff; }
+.lightbox__caption h3 { margin: 0 0 .25rem 0; }
+.lightbox__caption p  { margin: 0; opacity: .9; }
+
+/* Nav + close buttons */
+.lightbox__nav,
+.lightbox__close {
+  position: absolute;
+  display: grid; place-items: center;
+  width: 48px; height: 48px;
+  border: 0; border-radius: 999px;
+  background: rgba(0,0,0,.45);
+  color: #fff; font-size: 28px; line-height: 1;
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+}
+.lightbox__nav:hover,
+.lightbox__close:hover { background: rgba(0,0,0,.62); transform: scale(1.03); }
+
+.lightbox__prev { left: 24px; top: 50%; transform: translateY(-50%); }
+.lightbox__next { right: 24px; top: 50%; transform: translateY(-50%); }
+.lightbox__close{ right: 24px; top: 24px; font-size: 32px; }
+
+/* Make click outside the figure close-able (we’ll use JS, no extra element needed) */
+.lightbox__content::before {
+  content: ""; position: absolute; inset: 0;
+}
+
+/* ------------ Social bar (scoped) ------------ */
+.social-bar { 
+  margin: 2rem auto 0;
+  display: flex; justify-content: center;
+}
+
+.social-links {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+
+/* tokens */
+:root {
+  --social-h: 50px;
+  --social-radius: 10px;
+}
+
+/* Expand-on-hover button */
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  height: var(--social-h);
+  width: var(--social-h);          /* starts as a circle/square */
+  padding: 0 12px;
+  overflow: hidden;
+
+  font: inherit;
+  color: var(--fg, #333);
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: var(--social-radius);
+  box-shadow: 0 10px 10px rgba(0,0,0,0.08);
+
+  cursor: pointer;
+  text-decoration: none;
+
+  transition: width .35s ease, border-radius .35s ease, box-shadow .2s ease, background .2s ease;
+}
+
+/* smoother label reveal than width:auto */
+.social-btn span {
+  white-space: nowrap;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width .35s ease, opacity .25s ease;
+}
+
+.social-btn:hover,
+.social-btn:focus-visible {
+  width: 170px;                  /* expands to show text */
+  border-radius: 6px;
+  box-shadow: 0 12px 18px rgba(0,0,0,0.12);
+}
+
+.social-btn:hover span,
+.social-btn:focus-visible span {
+  max-width: 200px;
+  opacity: 1;
+}
+
+/* icons */
+.social-btn svg { display: block; }
+
+/* brand colors */
+#twitter svg  { fill: #1da1f2; }
+#linkedin svg { fill: #0e76a8; }
+#github svg   { fill: #333; }   /* fix from your snippet: target the SVG */
+
+/* Dark mode polish (optional) */
+@media (prefers-color-scheme: dark) {
+  .social-btn {
+    color: #e5e7eb;
+    background: #0b0c0f;
+    border-color: #22242a;
+    box-shadow: 0 10px 10px rgba(0,0,0,0.35);
+  }
+  #github svg { fill: #e5e7eb; }
 }
 

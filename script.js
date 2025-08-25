@@ -58,7 +58,7 @@ function renderCodingCard(item) {
       <p class="desc">${desc}</p>
       ${tagsHTML ? `<div class="tags">${tagsHTML}</div>` : `<div class="tags"></div>`}
       <div class="actions">
-        <a href="${encodeURI(link)}" target="_blank" rel="noopener">View project →</a>
+        <a href="${encodeURI(link)}" target="_blank" rel="noopener">View project→ </a>
       </div>
     </article>
   `;
@@ -113,7 +113,7 @@ function escapeHTML(s) {
 // === Carousel + Data Wiring ===
 (function () {
   // DOM
-  const catSelect = document.getElementById('tagCategory');
+  const catToggleMount = document.getElementById('tagCategoryToggle') || document.querySelector('.segmented');
   const codingEls = {
     track: document.getElementById('codingTrack'),
     prev:  document.getElementById('codingPrev'),
@@ -125,7 +125,57 @@ function escapeHTML(s) {
     next:  document.getElementById('artNext')
   };
 
-  if (!catSelect || !codingEls.track || !artEls.track) return;
+  if (!codingEls.track || !artEls.track) return;
+
+  const TagCategory = (() => {
+    let value = 'content';
+    let container = null;
+
+    function render(containerEl, cats, defaultValue) {
+      container = containerEl;
+      value = defaultValue || cats[0] || 'content';
+
+      if (!container) return;
+
+      // build a segmented control from categories
+      container.innerHTML = `
+        <div class="segmented" role="group" aria-label="Tag category">
+          ${cats.map(c => `
+            <button type="button" class="segmented-btn${c === value ? ' is-active' : ''}"
+                    data-value="${escAttr(c)}" aria-pressed="${c === value}">
+              ${escHtml(c)}
+            </button>`).join('')}
+        </div>
+      `;
+
+      // wire click -> set()
+      container.addEventListener('click', (e) => {
+        const btn = e.target.closest('.segmented-btn');
+        if (!btn) return;
+        set(btn.dataset.value);
+      });
+    }
+
+    function set(newValue) {
+      if (!newValue || newValue === value) return;
+      value = newValue;
+      // update UI
+      if (container) {
+        const btns = container.querySelectorAll('.segmented-btn');
+        btns.forEach(b => {
+          const active = b.dataset.value === value;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+      }
+      // notify listeners (drop-in replacement for old select 'change')
+      document.dispatchEvent(new CustomEvent('tagCategoryChange', { detail: { value } }));
+    }
+
+    function get() { return value; }
+
+    return { render, set, get };
+  })();
 
   // Load metadata once
   fetch('metadata.json')
@@ -139,10 +189,12 @@ function escapeHTML(s) {
 
       const art = (raw.art || []).slice(); // assume array of artworks
 
-      // Build categories for coding select
+      // Build categories for the toggle (no select)
       const categories = getAllCategories(coding);
       const defaultCat = categories.includes('content') ? 'content' : (categories[0] || '');
-      renderCategorySelect(catSelect, categories, defaultCat);
+      // Render segmented control into the mount
+      TagCategory.render(catToggleMount, categories, defaultCat);
+
 
       // Create carousels
       const codingCarousel = makeCarousel({
@@ -150,8 +202,9 @@ function escapeHTML(s) {
         trackEl: codingEls.track,
         prevEl: codingEls.prev,
         nextEl: codingEls.next,
-        renderCard: (item) => renderCodingCard(item, catSelect.value),
+        renderCard: (item) => renderCodingCard(item, TagCategory.get()),
       });
+
 
       const artCarousel = makeCarousel({
         items: art,
@@ -165,10 +218,11 @@ function escapeHTML(s) {
       codingCarousel.render();
       artCarousel.render();
 
-      // Re-render coding when category changes
-      catSelect.addEventListener('change', () => {
-        codingCarousel.render(); // renderCard uses current catSelect.value
+      // Re-render coding when the segmented toggle changes
+      document.addEventListener('tagCategoryChange', () => {
+        codingCarousel.render(); // renderCard uses TagCategory.get()
       });
+
 
       // Re-render both on responsive changes
       window.addEventListener('resize', debounce(() => {
@@ -200,11 +254,6 @@ function escapeHTML(s) {
     const set = new Set();
     items.forEach(it => Object.keys(it.tags || {}).forEach(c => set.add(c)));
     return [...set].sort();
-  }
-
-  function renderCategorySelect(selectEl, cats, value) {
-    selectEl.innerHTML = cats.map(c => `<option value="${escAttr(c)}">${escHtml(c)}</option>`).join('');
-    if (value) selectEl.value = value; // default 'content' if available
   }
 
   function computeVisibleCount() {
@@ -274,28 +323,31 @@ function escapeHTML(s) {
         <h4>${escHtml(item.project_name || item.title || '')}</h4>
         <p class="desc">${escHtml(item.description || '')}</p>
         <div class="tags">${tagsHtml}</div>
-        ${item.link ? `<p class="actions"><a class="btn" href="${escAttr(item.link)}" target="_blank" rel="noopener">View ↗</a></p>` : ''}
+        ${item.link ? `<p class="actions"><a class="btn" href="${escAttr(item.link)}" target="_blank" rel="noopener">View Project →</a></p>` : ''}
       </article>
     `;
   }
 
+  
+  // Replace your existing renderArtCard with this STRING-returning version
   function renderArtCard(item) {
-    // Try to be forgiving about field names
-    const title = item.title || item.name || '';
-    const desc  = item.description || '';
-    let imgSrc  = item.image || item.file || item.src || '';
-    if (imgSrc && !/^\.\.?\//.test(imgSrc) && !/^https?:\/\//i.test(imgSrc)) {
-      // If it's just a filename, assume ./assets/art/
-      imgSrc = `./assets/art/${imgSrc}`;
-    }
+    const esc = (s) =>
+      String(s ?? "").replace(/[&<>"']/g, (m) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m])
+      );
+
     return `
-      <article class="art-card">
-        ${imgSrc ? `<img src="${escAttr(imgSrc)}" alt="${escAttr(title || 'Artwork')}" style="width:100%;height:auto;border-radius:8px;">` : ''}
-        <h4>${escHtml(title)}</h4>
-        ${desc ? `<p class="desc">${escHtml(desc)}</p>` : ''}
-      </article>
-    `;
+  <article class="art-card tile">
+    <div class="thumb">
+      <img src="./assets/art/${esc(item.image)}" alt="${esc(item.title)}" loading="lazy" decoding="async">
+      <div class="text">
+        <h1>${esc(item.title)}</h1>
+        <p class="animate-text">${esc(item.description)}</p>
+      </div>
+    </div>
+  </article>`;
   }
+
 
   // --- utils ---
   function escHtml(s) {
@@ -305,4 +357,103 @@ function escapeHTML(s) {
   function debounce(fn, ms) {
     let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
   }
+})();
+
+
+// ===== Lightbox for ART projects =====
+(() => {
+  const track = document.getElementById('artTrack');
+  if (!track) return;
+
+  const lb        = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lbImg');
+  const lbTitle   = document.getElementById('lbTitle');
+  const lbDesc    = document.getElementById('lbDesc');
+  const btnPrev   = document.getElementById('lbPrev');
+  const btnNext   = document.getElementById('lbNext');
+  const btnClose  = document.getElementById('lbClose');
+
+  let slides = [];
+  let i = 0;
+
+  function collectSlides() {
+    slides = Array.from(track.querySelectorAll('.art-card.tile, .art-card'));
+  }
+
+  function readSlideData(card) {
+    const img  = card.querySelector('.thumb img') || card.querySelector('img');
+    const ttl  = card.querySelector('h1, h3, .title');
+    const desc = card.querySelector('p, .desc');
+    return {
+      src:  img?.getAttribute('src') || '',
+      alt:  img?.getAttribute('alt') || (ttl?.textContent?.trim() || 'Artwork'),
+      title: (ttl?.textContent || '').trim(),
+      desc:  (desc?.textContent || '').trim()
+    };
+  }
+
+  function update(index) {
+    if (!slides.length) collectSlides();
+    i = (index + slides.length) % slides.length; // wrap
+    const data = readSlideData(slides[i]);
+    lbImg.src = data.src;
+    lbImg.alt = data.alt;
+    lbTitle.textContent = data.title;
+    lbDesc.textContent = data.desc;
+
+    // Preload neighbors for snappier nav
+    const prevImg = readSlideData(slides[(i - 1 + slides.length) % slides.length]).src;
+    const nextImg = readSlideData(slides[(i + 1) % slides.length]).src;
+    [prevImg, nextImg].forEach(src => { const im = new Image(); im.src = src; });
+  }
+
+  function openAt(index) {
+    collectSlides();
+    if (!slides.length) return;
+    update(index);
+    lb.classList.add('is-open');
+    document.body.classList.add('modal-open');
+    btnClose.focus();
+    lb.setAttribute('aria-hidden', 'false');
+    window.addEventListener('keydown', onKey);
+  }
+
+  function close() {
+    lb.classList.remove('is-open');
+    document.body.classList.remove('modal-open');
+    lb.setAttribute('aria-hidden', 'true');
+    window.removeEventListener('keydown', onKey);
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft')  update(i - 1);
+    else if (e.key === 'ArrowRight') update(i + 1);
+  }
+
+  // Click on art card -> open lightbox at that index
+  track.addEventListener('click', (e) => {
+    const card = e.target.closest('.art-card');
+    if (!card) return;
+
+    // If your card contains links, avoid navigating:
+    const link = e.target.closest('a');
+    if (link) e.preventDefault();
+
+    collectSlides();
+    const idx = slides.indexOf(card);
+    if (idx !== -1) openAt(idx);
+  });
+
+  // Nav + close
+  btnPrev.addEventListener('click', () => update(i - 1));
+  btnNext.addEventListener('click', () => update(i + 1));
+  btnClose.addEventListener('click', close);
+
+  // Click outside the figure closes
+  lb.addEventListener('click', (e) => {
+    const fig = e.target.closest('.lightbox__figure');
+    const isButton = e.target.closest('.lightbox__nav, .lightbox__close');
+    if (!fig && !isButton) close();
+  });
 })();
