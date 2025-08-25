@@ -1,0 +1,47 @@
+{
+    "coding": [
+        {
+            "project_name": "Biomedicine applications",
+            "link":"https://github.com/moemchen13/ML_Biomedicine_project",
+            "description":"Streamlit application for user friendly experimentation of machine learning workflows.",
+            "tags":{
+                "content":[{"tag":"Machine Learning"},{"tag":"streamlit"},{"tag":"Linear Algebra"}],
+                "language":[{"tag": "Python"}]
+            }
+        },
+        {
+            "project_name": "Masterthesis",
+            "link":"https://github.com/moemchen13/MA_Knn_graph_coarsening",
+            "description":"KNN graph coarse graining from the perspective of dimensionality reduction. Explores connection between condesing information in a graph and their Dimensionality reduction",
+            "tags":{
+                "content":[{"tag":"Linear Algebra"},{"tag":"Graph theory"},{"tag":"Dimensionality reduction"}],
+                "language":[{"tag": "Python"}]
+            }
+        },
+        {
+            "project_name": "SSM Models",
+            "link":"https://github.com/moemchen13/State_Space_Models",
+            "description":"Exploring alternatives to common transformers architecture, mainly the S4 State Space models.",
+            "tags":{
+                "content":[{"tag":"Machine Learning"},{"tag":"Model architecture"},{"tag":"Linear Algebra"}],
+                "language":[{"tag": "Python"}]
+            }
+        }
+    ],
+    "art": [
+        {
+            "title": "siblings",
+            "description": "Coal sketch of my siblings",
+            "image": "siblings_large.jpg"
+        },
+        {
+            "title": "Einstein",
+            "description": "Rendered view of stringart picture of Einstein from my project.",
+            "image": "Einstein_large.jpg"
+        },
+        {
+            "title": "Othershit",
+            "description": "Rendered view of nothing there.",
+            "image": "no_large.jpg"
+        }]
+}
