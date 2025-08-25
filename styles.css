@@ -652,3 +652,41 @@ body.modal-open { overflow: hidden; }
   #github svg { fill: #e5e7eb; }
 }
 
+/* === About layout with right-side profile === */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 220px;   /* text | photo */
+  gap: 1.25rem;
+  align-items: center;                /* vertically align the two columns */
+}
+
+@media (min-width: 720px) {
+  .about-grid {
+    grid-template-columns: 1fr 260px; /* slightly larger photo on wider screens */
+    gap: 1.5rem;
+  }
+}
+
+.about-photo {
+  margin: 0;
+  justify-self: end;                  /* keep the image tight to the right edge */
+}
+
+.about-photo img {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 1 / 1;                /* perfect square */
+  object-fit: cover;                  /* crop nicely */
+  border-radius: 9999px;              /* circle; change to .75rem for rounded square */
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+
+/* Mobile: stack text above photo and center the image */
+@media (max-width: 639.98px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-photo { justify-self: center; }
+  .about-photo img { max-width: 200px; }
+}

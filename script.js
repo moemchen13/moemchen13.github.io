@@ -41,62 +41,6 @@ if (yearEl) {
 })();
 
 
-function renderCodingCard(item) {
-  const name = escapeHTML(item.project_name || "Untitled");
-  const link = typeof item.link === "string" ? item.link : "#";
-  const desc = escapeHTML(item.description || "");
-  const tags = Array.isArray(item.tags) ? item.tags : [];
-
-  const tagsHTML = tags.map(t => {
-    const label = escapeHTML(String(t.tag || "").trim());
-    return `<span class="tag">${label}</span>`;
-  }).join("");
-
-  return `
-    <article class="project-card">
-      <h4>${name}</h4>
-      <p class="desc">${desc}</p>
-      ${tagsHTML ? `<div class="tags">${tagsHTML}</div>` : `<div class="tags"></div>`}
-      <div class="actions">
-        <a href="${encodeURI(link)}" target="_blank" rel="noopener">View project→ </a>
-      </div>
-    </article>
-  `;
-}
-
-
-function renderArtCard(item) {
-  const title = escapeHTML(item.title || "Untitled");
-  const desc  = escapeHTML(item.description || "");
-
-  const img = normalizeArtPath(item.image || "");
-  const hasImg = Boolean(img);
-
-  // If there is no image value at all, render the card already in error state
-  const cardClass = hasImg ? "art-card" : "art-card error";
-
-  // The thumb area keeps size uniform; onerror flips the card to error state
-  const imgHTML = hasImg
-    ? `<img src="${encodeURI(img)}" alt="${title}" onerror="this.closest('article').classList.add('error')" />`
-    : "";
-
-  return `
-    <article class="${cardClass}">
-      <a href="${hasImg ? encodeURI(img) : '#'}" ${hasImg ? 'target="_blank" rel="noopener"' : ''}>
-        <div class="thumb">
-          ${imgHTML}
-          <div class="thumb-fallback">Image not found</div>
-        </div>
-        <div class="art-body">
-          <div class="title">${title}</div>
-          <p class="desc">${desc}</p>
-        </div>
-      </a>
-    </article>
-  `;
-}
-
-
 
 function normalizeArtPath(value) {
   const v = String(value || "").trim();
@@ -320,7 +264,7 @@ function escapeHTML(s) {
     const tagsHtml = tags.map(t => `<span class="tag">${escHtml(t)}</span>`).join('');
     return `
       <article class="project-card">
-        <h4>${escHtml(item.project_name || item.title || '')}</h4>
+        <h4><u>${escHtml(item.project_name || item.title || '')}</u></h4>
         <p class="desc">${escHtml(item.description || '')}</p>
         <div class="tags">${tagsHtml}</div>
         ${item.link ? `<p class="actions"><a class="btn" href="${escAttr(item.link)}" target="_blank" rel="noopener">View Project →</a></p>` : ''}
