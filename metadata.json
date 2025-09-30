@@ -1,15 +1,6 @@
 {
     "coding": [
         {
-            "project_name": "Biomedicine applications",
-            "link":"https://github.com/moemchen13/ML_Biomedicine_project",
-            "description":"Streamlit application for user friendly experimentation of machine learning workflows.",
-            "tags":{
-                "content":[{"tag":"Machine Learning"},{"tag":"streamlit"},{"tag":"Linear Algebra"}],
-                "language":[{"tag": "Python"}]
-            }
-        },
-        {
             "project_name": "Masterthesis",
             "link":"https://github.com/moemchen13/MA_Knn_graph_coarsening",
             "description":"KNN graph coarse graining from the perspective of dimensionality reduction. Explores connection between condesing information in a graph and their Dimensionality reduction",
@@ -26,22 +17,46 @@
                 "content":[{"tag":"Machine Learning"},{"tag":"Model architecture"},{"tag":"Linear Algebra"}],
                 "language":[{"tag": "Python"}]
             }
+        },
+        {
+            "project_name": "Biomedicine applications",
+            "link":"https://github.com/moemchen13/ML_Biomedicine_project",
+            "description":"Streamlit application for user friendly experimentation of machine learning workflows.",
+            "tags":{
+                "content":[{"tag":"Machine Learning"},{"tag":"streamlit"},{"tag":"Linear Algebra"}],
+                "language":[{"tag": "Python"}]
+            }
         }
     ],
     "art": [
         {
-            "title": "siblings",
+            "title": "Adonis Drowning",
+            "description": "Mirage Effect of Adonis losing himself.",
+            "image": "Adonis.png"
+        },
+        {
+            "title": "Icarus Descent",
+            "description": "Acryl painting of Icarus slow decent.",
+            "image": "Icarus_descent.png"
+        },
+        {
+            "title": "Icarus Landing",
+            "description": "Acryl painting of Icarus terrifying landing.",
+            "image": "Icarus_landing.png"
+        },
+        {
+            "title": "Rabbit of Artemis",
+            "description": "Mask of Artemis red rabbit",
+            "image": "Rabbit.png"
+        },
+        {
+            "title": "Siblings",
             "description": "Coal sketch of my siblings",
-            "image": "siblings_large.jpg"
+            "image": "Siblings.jpg"
         },
         {
             "title": "Einstein",
-            "description": "Rendered view of stringart picture of Einstein from my project.",
-            "image": "Einstein_large.jpg"
-        },
-        {
-            "title": "Othershit",
-            "description": "Rendered view of nothing there.",
-            "image": "no_large.jpg"
+            "description": "Rendered view of stringart picture of Einstein from my code project.",
+            "image": "Einstein.jpg"
         }]
 }

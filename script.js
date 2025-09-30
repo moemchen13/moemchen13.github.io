@@ -46,7 +46,7 @@ function normalizeArtPath(value) {
   const v = String(value || "").trim();
   if (!v) return "";
   if (v.startsWith("http://") || v.startsWith("https://") || v.includes("/")) return v;
-  return ART_BASE + v; // prepend base for bare filenames
+  return ART_BASE + v;
 }
 
 
@@ -54,9 +54,9 @@ function escapeHTML(s) {
   return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
 }
 
-// === Carousel + Data Wiring ===
+//Carousel + Data
 (function () {
-  // DOM
+  
   const catToggleMount = document.getElementById('tagCategoryToggle') || document.querySelector('.segmented');
   const codingEls = {
     track: document.getElementById('codingTrack'),
@@ -81,7 +81,7 @@ function escapeHTML(s) {
 
       if (!container) return;
 
-      // build a segmented control from categories
+      //control for categories
       container.innerHTML = `
         <div class="segmented" role="group" aria-label="Tag category">
           ${cats.map(c => `
@@ -92,7 +92,7 @@ function escapeHTML(s) {
         </div>
       `;
 
-      // wire click -> set()
+      // click -> set()
       container.addEventListener('click', (e) => {
         const btn = e.target.closest('.segmented-btn');
         if (!btn) return;
@@ -112,7 +112,7 @@ function escapeHTML(s) {
           b.setAttribute('aria-pressed', String(active));
         });
       }
-      // notify listeners (drop-in replacement for old select 'change')
+      // notify listeners
       document.dispatchEvent(new CustomEvent('tagCategoryChange', { detail: { value } }));
     }
 
@@ -121,22 +121,21 @@ function escapeHTML(s) {
     return { render, set, get };
   })();
 
-  // Load metadata once
+  // Load metadata
   fetch('metadata.json')
     .then(r => r.json())
     .then(raw => {
-      // Normalize tags for coding to allow both shapes
       const coding = (raw.coding || []).map(item => ({
         ...item,
         tags: normalizeTags(item.tags)
       }));
 
-      const art = (raw.art || []).slice(); // assume array of artworks
+      const art = (raw.art || []).slice();
 
-      // Build categories for the toggle (no select)
+      // Build categories for the toggle
       const categories = getAllCategories(coding);
       const defaultCat = categories.includes('content') ? 'content' : (categories[0] || '');
-      // Render segmented control into the mount
+      // Render segmented control
       TagCategory.render(catToggleMount, categories, defaultCat);
 
 
@@ -162,21 +161,21 @@ function escapeHTML(s) {
       codingCarousel.render();
       artCarousel.render();
 
-      // Re-render coding when the segmented toggle changes
+      // Re-render coding when toggle changes
       document.addEventListener('tagCategoryChange', () => {
-        codingCarousel.render(); // renderCard uses TagCategory.get()
+        codingCarousel.render();
       });
 
 
-      // Re-render both on responsive changes
+      // Re-render on responsive changes
       window.addEventListener('resize', debounce(() => {
-        codingCarousel.render(true); // true = keep first index, just change visible count
+        codingCarousel.render(true);
         artCarousel.render(true);
       }, 120));
     })
     .catch(console.error);
 
-  // ===== helpers =====
+  // helpers
 
   function normalizeTags(tags) {
     if (!tags) return {};
@@ -208,13 +207,13 @@ function escapeHTML(s) {
   }
 
   function makeCarousel({ items, trackEl, prevEl, nextEl, renderCard }) {
-    let firstIndex = 0; // index of first visible item
+    let firstIndex = 0;
     let lastVisibleCount = computeVisibleCount();
 
     function clampIndex(i) {
       const n = items.length;
       if (n === 0) return 0;
-      // wrap-around carousel
+      
       return ((i % n) + n) % n;
     }
 
@@ -223,10 +222,8 @@ function escapeHTML(s) {
     if (!keepIndex) firstIndex = clampIndex(firstIndex);
     const count = computeVisibleCount();
 
-    // NEW: expose visible count to CSS so cards share the row equally
     trackEl.style.setProperty('--visible', String(Math.min(count, n || 0)));
 
-    // Build slice with wrap-around
     const slice = [];
     for (let k = 0; k < Math.min(count, n || 0); k++) {
       slice.push(items[clampIndex(firstIndex + k)]);
@@ -235,7 +232,6 @@ function escapeHTML(s) {
     // Render
     trackEl.innerHTML = slice.map(renderCard).join('');
 
-    // Buttons enabled/disabled if there’s nothing to scroll
     const disable = n <= count;
     prevEl.disabled = disable;
     nextEl.disabled = disable;
@@ -257,7 +253,7 @@ function escapeHTML(s) {
     return { render, next, prev };
   }
 
-  // --- Card renderers ---
+  // Card renderers
 
   function renderCodingCard(item, category) {
     const tags = ((item.tags && item.tags[category]) || []).map(t => t.tag).filter(Boolean);
@@ -272,8 +268,6 @@ function escapeHTML(s) {
     `;
   }
 
-  
-  // Replace your existing renderArtCard with this STRING-returning version
   function renderArtCard(item) {
     const esc = (s) =>
       String(s ?? "").replace(/[&<>"']/g, (m) =>
@@ -293,7 +287,6 @@ function escapeHTML(s) {
   }
 
 
-  // --- utils ---
   function escHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
@@ -304,7 +297,7 @@ function escapeHTML(s) {
 })();
 
 
-// ===== Lightbox for ART projects =====
+// Lightbox for ART cards
 (() => {
   const track = document.getElementById('artTrack');
   if (!track) return;
@@ -345,7 +338,6 @@ function escapeHTML(s) {
     lbTitle.textContent = data.title;
     lbDesc.textContent = data.desc;
 
-    // Preload neighbors for snappier nav
     const prevImg = readSlideData(slides[(i - 1 + slides.length) % slides.length]).src;
     const nextImg = readSlideData(slides[(i + 1) % slides.length]).src;
     [prevImg, nextImg].forEach(src => { const im = new Image(); im.src = src; });
@@ -375,12 +367,11 @@ function escapeHTML(s) {
     else if (e.key === 'ArrowRight') update(i + 1);
   }
 
-  // Click on art card -> open lightbox at that index
+  // Click on card -> open lightbox at index
   track.addEventListener('click', (e) => {
     const card = e.target.closest('.art-card');
     if (!card) return;
 
-    // If your card contains links, avoid navigating:
     const link = e.target.closest('a');
     if (link) e.preventDefault();
 
@@ -389,7 +380,6 @@ function escapeHTML(s) {
     if (idx !== -1) openAt(idx);
   });
 
-  // Nav + close
   btnPrev.addEventListener('click', () => update(i - 1));
   btnNext.addEventListener('click', () => update(i + 1));
   btnClose.addEventListener('click', close);
