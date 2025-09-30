@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moritz Christ - Profile</title>
+
+    <meta name="description" content="Machine learning student looking for a PhD." />
+    <meta name="color-scheme" content="light dark" />
+
+    <meta property="og:title" content="Moritz Christ - Profile" />
+    <meta property="og:description" content="Machine learning student looking for a PhD." />
+    <meta property="og:type" content="website" />
+    <!--meta property="og:image" content="https://example.com/preview.png" preview image optional/-->
+
+    <!-- Twitter (now X) -->
+    <!--meta name="twitter:card" content="summary_large_image" /-->
+    <!--meta name="twitter:title" content="Moritz Christ - Profile" /-->
+    <!--meta name="twitter:description" content="Machine learning student looking for a PhD." /-->
+    <!--meta name="twitter:image" content="https://example.com/preview.png" /-->
+
+
+
+
+    <link rel="stylesheet" href="styles.css"/>
+  </head>
+
+  <body>
+    <header>
+      <nav class="nav container" aria-label="Primary">
+        <div class="brand">Moritz Christ</div>
+        <ul class="nav-list">
+          <li><a href="#about">About</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#coding">Projects</a></li>
+          <li><a href="#art">Artsy</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="content" class="container">
+      <section id="about" aria-label="About">
+        <div class="about-grid">
+          <div class="about-text">
+            <h1>About me</h1>
+            <!--p class="lead">Machine Learning Enthusiast</p-->
+            <p>
+              I began my studies in Tübingen after working as a paramedic in a stressful environment.
+              There, I realized that medicine is often seen as a complete solution, even though most patients never fully recover—an outlook that overlooks long-term quality of life.
+              This realization led me to Bioinformatics, where prevention and well-being are central. 
+              In this context, machine learning has become a powerful tool in medicine, and combined with my affinity for mathematics, it is the area where I want to make a difference.
+            </p>
+          </div>
+
+          <figure class="about-photo">
+            <img src="assets/profile_pic.jpeg" alt="Portrait of Moritz Christ" width="260" height="260" />
+          </figure>
+        </div>
+      </section>
+
+
+      <section id="experience" aria-label="Experience">
+        <h2>Experience</h2>
+        <p>
+          <b>2015-2018</b> Training to become a paramedic at the <a href="https://www.drk-stuttgart.de/">DRK Stuttgart</a>.
+        </p>
+        <p>
+          <b>2018-2019</b> Paramedic at the <a href="https://www.drk-stuttgart.de/">DRK Stuttgart</a>.
+        </p>
+        <p>
+          <b>2019-2022</b> Bachelor of Science in <u>Bioinformatics</u> at the <a href="https://uni-tuebingen.de/">Eberhard-Karls Universität Tübingen</a>.
+        </p>
+        <p>
+          <b>2022-2025</b> Master of Science in <u>Machine Learning</u> at the <a href="https://uni-tuebingen.de/">Eberhard-Karls Universität Tübingen</a>.
+        </p>
+      </section>
+
+      <section id="coding" aria-label="Coding Projects">
+        <div class="coding-header container">
+          <h2>Coding Projects</h2>
+        </div>
+        <div class="coding-layout">
+          
+          <!-- Carousel -->
+          <div class="carousel" id="codingCarousel">
+            <button class="carousel-btn prev" id="codingPrev" aria-label="Previous projects">‹</button>
+            <div class="carousel-viewport">
+              <div class="carousel-track" id="codingTrack"></div>
+            </div>
+            <button class="carousel-btn next" id="codingNext" aria-label="Next projects">›</button>
+          </div>
+          
+          <div id="tagCategoryToggle" class="toggle-center"></div>
+
+        </div>
+      </section>
+
+
+
+      <section id="art" aria-label="Art Projects">
+        <h2>"Art" and such</h2>
+        <!-- Art Carousel -->
+        <div class="carousel" id="artCarousel">
+          <button class="carousel-btn prev" id="artPrev" aria-label="Previous artworks">‹</button>
+          <div class="carousel-viewport">
+            <div class="carousel-track" id="artTrack"></div>
+          </div>
+          <button class="carousel-btn next" id="artNext" aria-label="Next artworks">›</button>
+        </div>
+
+      </section>
+
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+      <div class="lightbox__content" role="dialog" aria-modal="true" aria-label="Artwork viewer">
+        <button id="lbClose" class="lightbox__close" aria-label="Close">×</button>
+        <button id="lbPrev"  class="lightbox__nav lightbox__prev" aria-label="Previous">‹</button>
+        <button id="lbNext"  class="lightbox__nav lightbox__next" aria-label="Next">›</button>
+
+        <figure class="lightbox__figure">
+          <img id="lbImg" alt="">
+          <figcaption class="lightbox__caption">
+            <h3 id="lbTitle"></h3>
+            <p  id="lbDesc"></p>
+          </figcaption>
+        </figure>
+      </div>
+</div>
+
+    </main>
+
+    <footer class="footer">
+      <section class="social-bar container">
+        <nav class="social-links" aria-label="Social links">
+          <a class="social-btn" id="bluesky" href="https://bluesky.com/moemchen13" target="_blank" rel="noopener noreferrer">
+            <!-- twitter icon -->
+            <img src="./assets/icons/bluesky.png" width="24" height="24" alt="GitHub">
+            <span>@moemchen13</span>
+          </a>
+
+          <a class="social-btn" id="linkedin" href="https://www.linkedin.com/in/moritz" target="_blank" rel="noopener noreferrer">
+            <!-- linkedin icon -->
+            <img src="./assets/icons/linkedin.png" width="24" height="24" alt="GitHub">
+            <span>in/moritz</span>
+          </a>
+
+          <a class="social-btn" id="github" href="https://github.com/moemchen13" target="_blank" rel="noopener noreferrer">
+            <!-- github icon -->
+            <img src="./assets/icons/github.svg" width="24" height="24" alt="GitHub">
+            <span>moemchen13</span>
+          </a>
+        </nav>
+
+        
+        
+      </section>
+
+      <div class="container">
+        © <span id="year"></span> Moritz Christ 
+        <br>
+        <a href="mailto:super.moritz.christ@gmx.de">super.moritz.christ@gmx.de</a>
+      </div>
+
+    </footer>
+
+      <script src="script.js" defer></script>
+    </body>
+</html>
